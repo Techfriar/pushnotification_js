@@ -10,13 +10,13 @@ To use this package, first install it via npm:
 Using npm:
 
 ```bash
-$ npm install git+https://github.com/Techfriar/pushnotification_js.git
+npm install git+https://github.com/Techfriar/pushnotification_js.git
 ```
 
 Using yarn:
 
 ```bash
-$ yarn add git+https://github.com/Techfriar/pushnotification_js.git
+yarn add git+https://github.com/Techfriar/pushnotification_js.git
 ```
 
 ## Install from any other branches
@@ -24,13 +24,13 @@ $ yarn add git+https://github.com/Techfriar/pushnotification_js.git
 Using npm:
 
 ```bash
-$ npm install git+https://github.com/Techfriar/pushnotification_js.git#development
+npm install git+https://github.com/Techfriar/pushnotification_js.git#development
 ```
 
 Using yarn:
 
 ```bash
-$ yarn add git+https://github.com/Techfriar/pushnotification_js.git#development
+yarn add git+https://github.com/Techfriar/pushnotification_js.git#development
 ```
 
 ## Usage
