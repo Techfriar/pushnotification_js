@@ -51,12 +51,12 @@ const pushNotification = new PushNotification();
 
 ```javascript
 const title = "Notification Title";
-const subTitle = "Notification Body";
+const body = "Notification Body";
 const fcmTokens = [];
 
 const send = await pushNotification.sendNotification(
   title,
-  subTitle,
+  body,
   fcmTokens
 );
 ```
