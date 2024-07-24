@@ -1,6 +1,18 @@
 import axios from "axios";
 export default class PushNotification {
   /**
+   * Constructs a new instance of the PushNotification class.
+   *
+   * This constructor initializes the PushNotification class with a specified container URL,
+   * which is the base URL of the API to send push notifications.
+   *
+   * @param {string} containerUrl - The base URL of the API to send push notifications.
+   */
+  constructor(containerUrl) {
+    this.apiUrl = containerUrl;
+  }
+
+  /**
    * Sends a push notification to specified FCM (Firebase Cloud Messaging) tokens.
    *
    * This method sends a notification with a given title and body to a list of FCM tokens.
@@ -22,7 +34,7 @@ export default class PushNotification {
       // Make a POST request to the API URL to send the notification
       const response = await axios({
         method: "POST", // HTTP method for the request
-        url: "http://localhost:3001/api/send", // API URL to send the notification, appended with "/send"
+        url: `${this.apiUrl}/send`, // API URL to send the notification, appended with "/send"
         data: {
           // Data to be sent in the request body
           title: title, // Title of the notification
