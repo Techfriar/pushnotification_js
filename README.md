@@ -44,7 +44,7 @@ import PushNotification from "pushnotification_js";
 2. **Create an instance of `PushNotification`:**
 
 ```javascript
-const pushNotification = new PushNotification();
+const pushNotification = new PushNotification('<Your Docker Container URL>/api'); // Docker Container URL
 ```
 
 3. **Send a notification:**
