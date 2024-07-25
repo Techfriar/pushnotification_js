@@ -6,13 +6,14 @@ export default class PushNotification {
    * host, and port, which are used to construct the base URL of the API to send push notifications.
    * Defaults are provided for protocol and port.
    *
-   * @param {string} host - The host of the API (e.g., "localhost" or "api.example.com").
-   * @param {string} [protocol="https"] - The protocol of the API (e.g., "http" or "https").
-   * @param {number} [port=3001] - The port of the API (e.g., 80, 443, 3000).
+   * @param {Object} options - The options object containing protocol, host, and port.
+   * @param {string} options.host - The host of the API (e.g., "localhost" or "api.example.com").
+   * @param {string} [options.protocol="https"] - The protocol of the API (e.g., "http" or "https").
+   * @param {number} [options.port=3001] - The port of the API (e.g., 80, 443, 3000).
    *
    * @throws {Error} - Throws an error if host is not provided.
    */
-  constructor(host, protocol = "https", port = 3001) {
+  constructor({ host, protocol = "https", port = 3001 }) {
     if (!host) {
       throw new Error("Host is required and cannot be empty.");
     }
@@ -25,7 +26,6 @@ export default class PushNotification {
 
     this.apiUrl = `${protocol}://${host}:${port}`;
   }
-
   /**
    * Sends a push notification to specified FCM (Firebase Cloud Messaging) tokens.
    *
