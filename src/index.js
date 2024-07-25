@@ -1,15 +1,29 @@
-import axios from "axios";
 export default class PushNotification {
   /**
    * Constructs a new instance of the PushNotification class.
    *
-   * This constructor initializes the PushNotification class with a specified container URL,
-   * which is the base URL of the API to send push notifications.
+   * This constructor initializes the PushNotification class with specified protocol,
+   * host, and port, which are used to construct the base URL of the API to send push notifications.
+   * Defaults are provided for protocol and port.
    *
-   * @param {string} containerUrl - The base URL of the API to send push notifications.
+   * @param {string} host - The host of the API (e.g., "localhost" or "api.example.com").
+   * @param {string} [protocol="https"] - The protocol of the API (e.g., "http" or "https").
+   * @param {number} [port=3001] - The port of the API (e.g., 80, 443, 3000).
+   *
+   * @throws {Error} - Throws an error if host is not provided.
    */
-  constructor(containerUrl) {
-    this.apiUrl = containerUrl;
+  constructor(host, protocol = "https", port = 3001) {
+    if (!host) {
+      throw new Error("Host is required and cannot be empty.");
+    }
+    if (!protocol) {
+      throw new Error("Protocol is required and cannot be empty.");
+    }
+    if (!port) {
+      throw new Error("Port is required and cannot be empty.");
+    }
+
+    this.apiUrl = `${protocol}://${host}:${port}`;
   }
 
   /**
@@ -32,10 +46,12 @@ export default class PushNotification {
   async sendNotification(title, body, fcmTokens) {
     try {
       // Make a POST request to the API URL to send the notification
-      const response = await axios({
+      const response = await fetch(`${this.apiUrl}/send`, {
         method: "POST", // HTTP method for the request
-        url: `${this.apiUrl}/send`, // API URL to send the notification, appended with "/send"
-        data: {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: {
           // Data to be sent in the request body
           title: title, // Title of the notification
           body: body, // Body content of the notification
