@@ -1,3 +1,5 @@
+import fetch from "node-fetch";
+
 export default class PushNotification {
   /**
    * Constructs a new instance of the PushNotification class.
@@ -9,11 +11,11 @@ export default class PushNotification {
    * @param {Object} options - The options object containing protocol, host, and port.
    * @param {string} options.host - The host of the API (e.g., "localhost" or "api.example.com").
    * @param {string} [options.protocol="https"] - The protocol of the API (e.g., "http" or "https").
-   * @param {number} [options.port=3001] - The port of the API (e.g., 80, 443, 3000).
+   * @param {number} [options.port=5000] - The port of the API (e.g., 80, 443, 3000).
    *
-   * @throws {Error} - Throws an error if host is not provided.
+   * @throws {Error} - Throws an error if host, protocol, or port is not provided or if the URL is invalid.
    */
-  constructor({ host, protocol = "https", port = 3001 }) {
+  constructor({ host, protocol = "http", port = 5000 }) {
     if (!host) {
       throw new Error("Host is required and cannot be empty.");
     }
@@ -25,7 +27,17 @@ export default class PushNotification {
     }
 
     this.apiUrl = `${protocol}://${host}:${port}`;
+
+    // Validate the constructed URL
+    try {
+      new URL(this.apiUrl);
+    } catch (error) {
+      throw new Error(
+        "Invalid URL constructed from provided protocol, host, and port."
+      );
+    }
   }
+
   /**
    * Sends a push notification to specified FCM (Firebase Cloud Messaging) tokens.
    *
@@ -45,22 +57,42 @@ export default class PushNotification {
    */
   async sendNotification(title, body, fcmTokens) {
     try {
+      // Validate title
+      if (typeof title !== "string" || title.trim() === "") {
+        throw new Error("Title must be a non-empty string.");
+      }
+
+      // Validate body
+      if (typeof body !== "string" || body.trim() === "") {
+        throw new Error("Body must be a non-empty string.");
+      }
+
+      // Validate fcmTokens
+      if (
+        !Array.isArray(fcmTokens) ||
+        fcmTokens.some(
+          (token) => typeof token !== "string" || token.trim() === ""
+        )
+      ) {
+        throw new Error("FCM tokens must be an array of non-empty strings.");
+      }
       // Make a POST request to the API URL to send the notification
-      const response = await fetch(`${this.apiUrl}/send`, {
+      const response = await fetch(`${this.apiUrl}/api/send`, {
         method: "POST", // HTTP method for the request
         headers: {
           "Content-Type": "application/json",
         },
-        body: {
-          // Data to be sent in the request body
+        body: JSON.stringify({
           title: title, // Title of the notification
           body: body, // Body content of the notification
           fcm_tokens: fcmTokens, // Array of FCM tokens to which the notification should be sent
-        },
+        }),
       });
       // Check if the response status indicates success
-      if (response.data.status) {
-        return response.data.data; // Return the data from the response if successful
+      if (response.status) {
+        // Parse the JSON response
+        const data = await response.json();
+        return data.data; // Return the data from the response if successful
       } else {
         return false; // Return false if the response status indicates failure
       }
