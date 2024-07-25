@@ -92,7 +92,11 @@ export default class PushNotification {
       if (response.status) {
         // Parse the JSON response
         const data = await response.json();
-        return data.data; // Return the data from the response if successful
+        if (data.data.successCount > 0) {
+          return data.data; // Return the data from the response if successful
+        } else {
+          return false;
+        }
       } else {
         return false; // Return false if the response status indicates failure
       }
