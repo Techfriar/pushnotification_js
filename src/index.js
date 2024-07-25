@@ -1,15 +1,41 @@
-import axios from "axios";
+import fetch from "node-fetch";
+
 export default class PushNotification {
   /**
    * Constructs a new instance of the PushNotification class.
    *
-   * This constructor initializes the PushNotification class with a specified container URL,
-   * which is the base URL of the API to send push notifications.
+   * This constructor initializes the PushNotification class with specified protocol,
+   * host, and port, which are used to construct the base URL of the API to send push notifications.
+   * Defaults are provided for protocol and port.
    *
-   * @param {string} containerUrl - The base URL of the API to send push notifications.
+   * @param {Object} options - The options object containing protocol, host, and port.
+   * @param {string} options.host - The host of the API (e.g., "localhost" or "api.example.com").
+   * @param {string} [options.protocol="https"] - The protocol of the API (e.g., "http" or "https").
+   * @param {number} [options.port=5000] - The port of the API (e.g., 80, 443, 3000).
+   *
+   * @throws {Error} - Throws an error if host, protocol, or port is not provided or if the URL is invalid.
    */
-  constructor(containerUrl) {
-    this.apiUrl = containerUrl;
+  constructor({ host, protocol = "http", port = 5000 }) {
+    if (!host) {
+      throw new Error("Host is required and cannot be empty.");
+    }
+    if (!protocol) {
+      throw new Error("Protocol is required and cannot be empty.");
+    }
+    if (!port) {
+      throw new Error("Port is required and cannot be empty.");
+    }
+
+    this.apiUrl = `${protocol}://${host}:${port}`;
+
+    // Validate the constructed URL
+    try {
+      new URL(this.apiUrl);
+    } catch (error) {
+      throw new Error(
+        "Invalid URL constructed from provided protocol, host, and port."
+      );
+    }
   }
 
   /**
@@ -31,20 +57,42 @@ export default class PushNotification {
    */
   async sendNotification(title, body, fcmTokens) {
     try {
+      // Validate title
+      if (typeof title !== "string" || title.trim() === "") {
+        throw new Error("Title must be a non-empty string.");
+      }
+
+      // Validate body
+      if (typeof body !== "string" || body.trim() === "") {
+        throw new Error("Body must be a non-empty string.");
+      }
+
+      // Validate fcmTokens
+      if (
+        !Array.isArray(fcmTokens) ||
+        fcmTokens.some(
+          (token) => typeof token !== "string" || token.trim() === ""
+        )
+      ) {
+        throw new Error("FCM tokens must be an array of non-empty strings.");
+      }
       // Make a POST request to the API URL to send the notification
-      const response = await axios({
+      const response = await fetch(`${this.apiUrl}/api/send`, {
         method: "POST", // HTTP method for the request
-        url: `${this.apiUrl}/send`, // API URL to send the notification, appended with "/send"
-        data: {
-          // Data to be sent in the request body
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
           title: title, // Title of the notification
           body: body, // Body content of the notification
           fcm_tokens: fcmTokens, // Array of FCM tokens to which the notification should be sent
-        },
+        }),
       });
       // Check if the response status indicates success
-      if (response.data.status) {
-        return response.data.data; // Return the data from the response if successful
+      if (response.status) {
+        // Parse the JSON response
+        const data = await response.json();
+        return data.data; // Return the data from the response if successful
       } else {
         return false; // Return false if the response status indicates failure
       }
