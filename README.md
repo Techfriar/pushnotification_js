@@ -44,7 +44,11 @@ import PushNotification from "pushnotification_js";
 2. **Create an instance of `PushNotification`:**
 
 ```javascript
-const pushNotification = new PushNotification('<Your Docker Container URL>/api'); // Docker Container URL
+const pushNotification = new PushNotification({
+  protocol: "http", //(Optional) Default protocol : http
+  host: "localhost", // (required)
+  port: 5000, //(Optional) Default port : 5000
+});
 ```
 
 3. **Send a notification:**
@@ -54,11 +58,7 @@ const title = "Notification Title";
 const body = "Notification Body";
 const fcmTokens = [];
 
-const send = await pushNotification.sendNotification(
-  title,
-  body,
-  fcmTokens
-);
+const send = await pushNotification.sendNotification(title, body, fcmTokens);
 ```
 
 - `title`: The title of the push notification.
