@@ -50,12 +50,13 @@ export default class PushNotification {
    * @param {string} title - The title of the push notification.
    * @param {string} body - The body content of the push notification.
    * @param {string[]} fcmTokens - An array of FCM tokens to which the notification should be sent.
+   * @param {Object} [data={}] - An optional data object to include in the notification.
    *
    * @returns {Object|boolean} - Returns the data from the API response if successful, or `false` if the response indicates failure.
    *
    * @throws {Error} - Throws an error if there is an issue with the request or response.
    */
-  async sendNotification(title, body, fcmTokens) {
+  async sendNotification(title, body, fcmTokens, data = {}) {
     try {
       // Validate title
       if (typeof title !== "string" || title.trim() === "") {
@@ -86,6 +87,7 @@ export default class PushNotification {
           title: title, // Title of the notification
           body: body, // Body content of the notification
           fcm_tokens: fcmTokens, // Array of FCM tokens to which the notification should be sent
+          data: data, // Data object to include in the notification
         }),
       });
       // Check if the response status indicates success
