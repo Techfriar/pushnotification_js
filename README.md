@@ -57,12 +57,16 @@ const pushNotification = new PushNotification({
 const title = "Notification Title";
 const body = "Notification Body";
 const fcmTokens = [];
+const data = {
+  "offer" : "1" // (Optional)
+}
 
-const send = await pushNotification.sendNotification(title, body, fcmTokens);
+const send = await pushNotification.sendNotification(title, body, fcmTokens, data);
 ```
 
 - `title`: The title of the push notification.
 - `body`: The body content of the push notification.
 - `fcmTokens`: An array of FCM tokens to which the notification should be sent.
+- `data` ; A map of data fields
 
 The `sendNotification` method returns the data from the API response if the notification was sent successfully, or `false` if there was a failure.
